@@ -26,5 +26,6 @@
     "38": "images/pika38.png",
     "48": "images/pika48.png",
     "128": "images/pika128.png"
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-6V6mZVgewHoMDuK3KefWp7Llrv+UWOWARbqIsksfQL8=' 'sha256-iQxK+icJV50tH5bZbyqQPefnFtMTIwsEW9G+uFMmtDg='; object-src 'self'"
 }

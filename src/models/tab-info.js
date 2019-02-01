@@ -5,6 +5,7 @@ function TabInfo() {
 
   this.currentTabId = null;
   this.currentActiveStartedAt = null;
+  this.currentDateString = null;
 
   this.synced = false;
 };
@@ -115,7 +116,7 @@ TabInfo.prototype.save = function() {
 TabInfo.prototype.useTabInfo = function() {
   return new Promise((resolve, reject) => {
     if (this.synced) {
-      resolve();
+      this.refreshDate().then(() => resolve());
     } else {
       chrome.storage.sync.get(['tabInfo'], (result) => {
         let info = result.tabInfo;
@@ -124,12 +125,36 @@ TabInfo.prototype.useTabInfo = function() {
         this.domainDuration = info.domainDuration;
         this.currentTabId = null;
         this.currentActiveStartedAt = null;
+        this.currentDateString = info.currentDateString;
         this.synced = true;
         console.log(this.windowIdToTagId);
         console.log(this.tabIdToDomain);
         console.log(this.domainDuration);
+        this.refreshDate().then(() => resolve());
+      })
+    }
+  });
+};
+TabInfo.prototype.refreshDate = function() {
+  return new Promise((resolve, reject) => {
+    var today = new Date().toLocaleDateString();
+
+    if (this.currentDateString != today) {
+      chrome.storage.sync.get(['tabInfoHistory'], (result) => {
+        if (this.currentDateString) {
+          let tabInfoHistory = result.tabInfoHistory || {};
+          tabInfoHistory[this.currentDateString] = this.domainDuration;
+          chrome.storage.sync.set({ tabInfoHistory: tabInfoHistory }, (result) => {
+            console.log('sync history');
+          });
+        }
+        this.currentDateString = today;
+        this.domainDuration = {};
+        this.save();
         resolve();
       })
+    } else {
+      resolve();
     }
   });
 };

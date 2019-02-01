@@ -1,0 +1,10 @@
+main {
+    paddin: 0 8px;
+}
+h4 {
+    margin: 4px 0;
+}
+.domain-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
